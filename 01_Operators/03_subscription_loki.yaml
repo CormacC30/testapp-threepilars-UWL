@@ -4,6 +4,17 @@ metadata:
   name: openshift-operators-redhat
   labels:
     openshift.io/cluster-monitoring: "true"
+    kubernetes.io/metadata.name: openshift-operators-redhat
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: AlertingRule.v1.loki.grafana.com,LokiStack.v1.loki.grafana.com,RecordingRule.v1.loki.grafana.com,RulerConfig.v1.loki.grafana.com
+  name: openshift-operators-redhat
+  namespace: openshift-operators-redhat
+spec:
+  upgradeStrategy: Default
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
