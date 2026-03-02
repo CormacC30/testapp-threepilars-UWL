@@ -23,7 +23,7 @@ spec:
       type: s3
     tls:
       caName: openshift-service-ca.crt
-  storageClassName: Default
+  storageClassName: gp3-csi
   tenants:
     mode: openshift-logging
 ---
