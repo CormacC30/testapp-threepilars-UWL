@@ -1,47 +1,10 @@
-apiVersion: v1
-kind: Namespace
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
 metadata:
-  name: openshift-storage
-  labels:
-    openshift.io/cluster-monitoring: "true"
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: openshift-storage-operatorgroup
+  name: ocs-storagecluster
   namespace: openshift-storage
 spec:
-  targetNamespaces:
-  - openshift-storage
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  labels:
-    operators.coreos.com/odf-operator.openshift-storage: ""
-  name: odf-operator
-  namespace: openshift-storage
-spec:
-  channel: stable-4.20
-  installPlanApproval: Automatic
-  name: odf-operator
-  source: redhat-operators
-  sourceNamespace: openshift-marketplace
-  startingCSV: odf-operator.v4.20.5-rhodf
----
-apiVersion: v1
-items:
-- apiVersion: ocs.openshift.io/v1
-  kind: StorageCluster
-  metadata:
-    annotations:
-      uninstall.ocs.openshift.io/cleanup-policy: delete
-      uninstall.ocs.openshift.io/mode: graceful
-    finalizers:
-    - storagecluster.ocs.openshift.io
-    name: ocs-storagecluster
-    namespace: openshift-storage
-  spec:
+    enableCephTools: true
     arbiter: {}
     encryption:
       keyRotation:

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Operators
-#oc create -Rf 01_Operators/
+oc create -Rf 01_Operators/
 
 #Test App
 oc create -Rf 02_App/
