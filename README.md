@@ -15,3 +15,8 @@ Demo App: https://github.com/coffeegoesincodecomesout/testapp-ThreePilars
 oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
 oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
 ```
+
+TODO
+
+Test the claude written wrapper script
+replace test app with new one - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
