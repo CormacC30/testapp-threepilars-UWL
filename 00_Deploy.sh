@@ -124,4 +124,9 @@ oc_create -f 05_Tempo/04_uiplugin.yaml
 log "--- Phase 7: Configure User Workload Monitoring ---"
 oc_create -Rf 06_UserWorkload/
 
+# ── Phase 8: Deploy OTEL sidecar ─────────────────────────────────────────
+
+oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
+oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
+
 log "=== Deployment complete ==="
