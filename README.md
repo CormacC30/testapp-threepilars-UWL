@@ -9,12 +9,6 @@ Demo App: https://github.com/coffeegoesincodecomesout/testapp-ThreePilars
 ```
 ./00_Deploy.sh
 ```
-2. scale the testapp down and back up, inorder to deploy the OTEL sidecar 
-
-```
-oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
-oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
-```
 
 TODO
 
