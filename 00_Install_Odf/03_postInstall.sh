@@ -3,13 +3,10 @@
 #Deploy the Uiplugin
 oc patch console.operator cluster -n openshift-storage --type json -p '[{"op": "add", "path": "/spec/plugins", "value": ["odf-console"]}]'
 
-#Enable cephtools
-oc patch OCSInitialization/ocsinit -n openshift-storage --type=merge -p='{"spec":{ "enableCephTools": true}}'
-
 TOOLS_POD=$(oc get pods -n openshift-storage -l app=rook-ceph-tools -o name)
 
 while true; do                                                                                                                                                                                                    
-      if oc exec -n openshift-storage pod/$TOOLS_POD -- ceph status 2>/dev/null | grep -q HEALTH_OK; then
+      if oc exec -n openshift-storage $TOOLS_POD -- ceph status 2>/dev/null | grep -q HEALTH_OK; then
           ((consecutive++))                                                                                                                                                                                         
           echo "[$(date)] HEALTH_OK confirmed (${consecutive}/2)"
           if [ $consecutive -ge 2 ]; then                                                                                                                                                                           
