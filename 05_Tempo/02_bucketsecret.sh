@@ -1,4 +1,27 @@
 #!/bin/bash
+set -euo pipefail
+
+# Wait for ODF to provision the ObjectBucketClaim resources (configmap + secret)
+NAMESPACE="ns1-uwl"
+CONFIGMAP="tempo-bucket-odf"
+SECRET="tempo-bucket-odf"
+TIMEOUT=300
+INTERVAL=10
+elapsed=0
+
+echo "Waiting for configmap '$CONFIGMAP' and secret '$SECRET' in '$NAMESPACE'..."
+until oc get configmap "$CONFIGMAP" -n "$NAMESPACE" &>/dev/null && \
+      oc get secret    "$SECRET"    -n "$NAMESPACE" &>/dev/null; do
+  if [ $elapsed -ge $TIMEOUT ]; then
+    echo "ERROR: Timed out waiting for OBC resources in '$NAMESPACE'" >&2
+    exit 1
+  fi
+  echo "  Not ready yet (${elapsed}s elapsed)..."
+  sleep $INTERVAL
+  elapsed=$((elapsed + INTERVAL))
+done
+echo "  OBC resources ready."
+
 BUCKET_HOST=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_HOST}')
 BUCKET_NAME=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_NAME}')
 BUCKET_PORT=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_PORT}')

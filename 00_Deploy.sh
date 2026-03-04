@@ -42,6 +42,33 @@ oc_create() {
 # Readiness checks
 # ──────────────────────────────────────────────────────────────────────────────
 
+# Wait for all CSVs in a namespace to reach phase Succeeded
+wait_for_all_csvs() {
+  local namespace=$1 timeout=${2:-900}
+  local interval=20 elapsed=0
+  log "Waiting for all CSVs in '$namespace' to succeed (timeout: ${timeout}s)..."
+  while [ $elapsed -lt $timeout ]; do
+    local total pending
+    total=$(oc get csv -n "$namespace" --no-headers 2>/dev/null | wc -l)
+    if [ "$total" -eq 0 ]; then
+      log "  No CSVs found yet... (${elapsed}s elapsed)"
+      sleep $interval
+      elapsed=$((elapsed + interval))
+      continue
+    fi
+    pending=$(oc get csv -n "$namespace" --no-headers 2>/dev/null \
+              | grep -vc "Succeeded" || true)
+    if [ "$pending" -eq 0 ]; then
+      log "  All $total CSVs in '$namespace' are Succeeded"
+      return 0
+    fi
+    log "  $pending/$total CSVs not yet Succeeded (${elapsed}s elapsed)"
+    sleep $interval
+    elapsed=$((elapsed + interval))
+  done
+  die "Timed out waiting for all CSVs in '$namespace'"
+}
+
 # Wait for an OLM Subscription's CSV to reach phase Succeeded
 wait_for_subscription() {
   local name=$1 namespace=$2 timeout=${3:-900}
@@ -86,7 +113,7 @@ run_script "00_Install_Odf/00_preInstall.sh"
 oc_create -Rf 00_Install_Odf/01_subscription_odf.yaml
 wait_for_subscription odf-operator openshift-storage 900
 
-sleep 600
+wait_for_all_csvs openshift-storage 900
 
 oc_create -Rf 00_Install_Odf/02_storagecluster.yaml
 run_script "00_Install_Odf/03_postInstall.sh"   # polls until Ceph is HEALTH_OK
