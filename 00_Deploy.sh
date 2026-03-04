@@ -85,6 +85,9 @@ log "--- Phase 1: Install ODF ---"
 run_script "00_Install_Odf/00_preInstall.sh"
 oc_create -Rf 00_Install_Odf/01_subscription_odf.yaml
 wait_for_subscription odf-operator openshift-storage 900
+
+sleep 600
+
 oc_create -Rf 00_Install_Odf/02_storagecluster.yaml
 run_script "00_Install_Odf/03_postInstall.sh"   # polls until Ceph is HEALTH_OK
 
