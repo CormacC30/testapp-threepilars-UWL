@@ -45,7 +45,7 @@ oc_create() {
 # Wait for all CSVs in a namespace to reach phase Succeeded
 wait_for_all_csvs() {
   local namespace=$1 timeout=${2:-900}
-  local interval=20 elapsed=0
+  local interval=90 elapsed=0
   log "Waiting for all CSVs in '$namespace' to succeed (timeout: ${timeout}s)..."
   while [ $elapsed -lt $timeout ]; do
     local total pending
