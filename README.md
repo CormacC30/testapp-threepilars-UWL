@@ -20,8 +20,7 @@ The cluster observability operator manages the UIPlugins.
 TODO
 
 Improve wrapper script: 
- - wait for ODF deps
- - tempo operator install fails, uninstall and reinstall resolves
+ - waiting for operator deps could be improved
 
 replace test app with one consisting of a front and backend.
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
