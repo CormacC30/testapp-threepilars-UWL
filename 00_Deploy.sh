@@ -43,15 +43,24 @@ oc_create() {
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Wait for all CSVs in a namespace to reach phase Succeeded
+# Optional third arg: minimum number of CSVs expected before checking readiness
 wait_for_all_csvs() {
-  local namespace=$1 timeout=${2:-900}
+  local namespace=$1 timeout=${2:-900} expected=${3:-0}
   local interval=90 elapsed=0
-  log "Waiting for all CSVs in '$namespace' to succeed (timeout: ${timeout}s)..."
+  local count_msg=""
+  [ "$expected" -gt 0 ] && count_msg=" (expecting $expected)"
+  log "Waiting for all CSVs in '$namespace' to succeed${count_msg} (timeout: ${timeout}s)..."
   while [ $elapsed -lt $timeout ]; do
     local total pending
     total=$(oc get csv -n "$namespace" --no-headers 2>/dev/null | wc -l)
     if [ "$total" -eq 0 ]; then
       log "  No CSVs found yet... (${elapsed}s elapsed)"
+      sleep $interval
+      elapsed=$((elapsed + interval))
+      continue
+    fi
+    if [ "$expected" -gt 0 ] && [ "$total" -lt "$expected" ]; then
+      log "  Only $total/$expected CSVs present so far (${elapsed}s elapsed)"
       sleep $interval
       elapsed=$((elapsed + interval))
       continue
@@ -72,7 +81,7 @@ wait_for_all_csvs() {
 # Wait for an OLM Subscription's CSV to reach phase Succeeded
 wait_for_subscription() {
   local name=$1 namespace=$2 timeout=${3:-900}
-  local interval=20 elapsed=0
+  local interval=60 elapsed=0
   log "Waiting for subscription '$name' in '$namespace' (timeout: ${timeout}s)..."
   while [ $elapsed -lt $timeout ]; do
     local csv phase
@@ -113,7 +122,7 @@ run_script "00_Install_Odf/00_preInstall.sh"
 oc_create -Rf 00_Install_Odf/01_subscription_odf.yaml
 wait_for_subscription odf-operator openshift-storage 900
 
-wait_for_all_csvs openshift-storage 900
+wait_for_all_csvs openshift-storage 900 11
 
 oc_create -Rf 00_Install_Odf/02_storagecluster.yaml
 run_script "00_Install_Odf/03_postInstall.sh"   # polls until Ceph is HEALTH_OK
