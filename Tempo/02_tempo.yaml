@@ -23,8 +23,11 @@ spec:
           maxSearchDuration: 1h
   storage:
     secret:
-      name: minio
+      name: tempostack-dev-s3
       type: s3
+    tls:
+      caName: tempo-s3-ca
+      enabled: true
   storageSize: 1Gi
   resources:
     total:
