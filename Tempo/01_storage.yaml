@@ -8,5 +8,4 @@ stringData:
   bucket: tempo
   access_key_id: <access_key_id>
   access_key_secret: <access_key_secret>
-  region: us-east-1
 type: Opaque
