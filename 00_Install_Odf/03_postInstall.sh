@@ -3,7 +3,13 @@
 #Deploy the Uiplugin
 oc patch console.operator cluster -n openshift-storage --type json -p '[{"op": "add", "path": "/spec/plugins", "value": ["odf-console"]}]'
 
-TOOLS_POD=$(oc get pods -n openshift-storage -l app=rook-ceph-tools -o name)
+TOOLS_POD=""
+until [ -n "$TOOLS_POD" ]; do
+    echo "[$(date)] Waiting for rook-ceph-tools pod..."
+    sleep 10
+    TOOLS_POD=$(oc get pods -n openshift-storage -l app=rook-ceph-tools -o name)
+done
+echo "[$(date)] Found tools pod: $TOOLS_POD"
 
 while true; do                                                                                                                                                                                                    
       if oc exec -n openshift-storage $TOOLS_POD -- ceph status 2>/dev/null | grep -q HEALTH_OK; then
