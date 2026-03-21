@@ -116,16 +116,13 @@ cd "$SCRIPT_DIR"
 
 log "=== Starting deployment (log: $LOG_FILE) ==="
 
-# ── Phase 1: ODF ─────────────────────────────────────────────────────────────
-log "--- Phase 1: Install ODF ---"
-run_script "00_Install_Odf/00_preInstall.sh"
-oc_create -Rf 00_Install_Odf/01_subscription_odf.yaml
-wait_for_subscription odf-operator openshift-storage 900
+# ── Phase 1: MCG Standalone ───────────────────────────────────────────────────
+log "--- Phase 1: Install MCG Standalone ---"
+oc_create -Rf 00_Install_Odf/01_subscription_mcg.yaml
+wait_for_subscription mcg-operator openshift-storage 900
 
-wait_for_all_csvs openshift-storage 900 11
-
-oc_create -Rf 00_Install_Odf/02_storagecluster.yaml
-run_script "00_Install_Odf/03_postInstall.sh"   # polls until Ceph is HEALTH_OK
+oc_create -Rf 00_Install_Odf/02_noobaa.yaml
+run_script "00_Install_Odf/03_postInstall.sh"   # polls until NooBaa is Ready
 
 # ── Phase 2: Operators ────────────────────────────────────────────────────────
 log "--- Phase 2: Install Operators ---"
