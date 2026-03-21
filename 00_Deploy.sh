@@ -160,7 +160,15 @@ oc_create -f 05_Tempo/04_uiplugin.yaml
 log "--- Phase 7: Configure User Workload Monitoring ---"
 oc_create -Rf 06_UserWorkload/
 
-# ── Phase 8: Deploy OTEL sidecar ─────────────────────────────────────────
+# ── Phase 8: Perses ───────────────────────────────────────────────────────────
+log "--- Phase 8: Configure Perses ---"
+oc_create -Rf 07_Perses/
+
+# ── Phase 9: Troubleshooting ──────────────────────────────────────────────────
+log "--- Phase 9: Configure Troubleshooting ---"
+oc_create -Rf 08_Troubleshooting/
+
+# ── Phase 10: Deploy OTEL sidecar ────────────────────────────────────────────
 
 oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
 oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
