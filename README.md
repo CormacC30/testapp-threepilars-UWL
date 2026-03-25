@@ -19,9 +19,6 @@ The cluster observability operator manages the UIPlugins.
 
 TODO
 
-Improve wrapper script: 
- - waiting for operator deps could be improved
-
 replace test app with one consisting of a front and backend.
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-backend 
