@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Wait for ODF to provision the ObjectBucketClaim resources (configmap + secret)
-NAMESPACE="ns1-uwl"
+NAMESPACE="openshift-tempo"
 CONFIGMAP="tempo-bucket-odf"
 SECRET="tempo-bucket-odf"
 TIMEOUT=300
@@ -22,13 +22,20 @@ until oc get configmap "$CONFIGMAP" -n "$NAMESPACE" &>/dev/null && \
 done
 echo "  OBC resources ready."
 
-BUCKET_HOST=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_HOST}')
-BUCKET_NAME=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_NAME}')
-BUCKET_PORT=$(oc get -n ns1-uwl configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_PORT}')
-ACCESS_KEY_ID=$(oc get -n ns1-uwl secret tempo-bucket-odf -o jsonpath='{.data.AWS_ACCESS_KEY_ID}' | base64 -d)
-SECRET_ACCESS_KEY=$(oc get -n ns1-uwl secret tempo-bucket-odf -o jsonpath='{.data.AWS_SECRET_ACCESS_KEY}' | base64 -d)
-oc create secret generic tempostack-dev-odf -n ns1-uwl \
+BUCKET_HOST=$(oc get -n openshift-tempo configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_HOST}')
+BUCKET_NAME=$(oc get -n openshift-tempo configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_NAME}')
+BUCKET_PORT=$(oc get -n openshift-tempo configmap tempo-bucket-odf -o jsonpath='{.data.BUCKET_PORT}')
+ACCESS_KEY_ID=$(oc get -n openshift-tempo secret tempo-bucket-odf -o jsonpath='{.data.AWS_ACCESS_KEY_ID}' | base64 -d)
+SECRET_ACCESS_KEY=$(oc get -n openshift-tempo secret tempo-bucket-odf -o jsonpath='{.data.AWS_SECRET_ACCESS_KEY}' | base64 -d)
+output=$(oc create secret generic tempostack-dev-odf -n openshift-tempo \
    --from-literal=access_key_id=${ACCESS_KEY_ID} \
    --from-literal=access_key_secret=${SECRET_ACCESS_KEY} \
    --from-literal=bucket=${BUCKET_NAME} \
-   --from-literal=endpoint=https://${BUCKET_HOST}:${BUCKET_PORT}
+   --from-literal=endpoint=https://${BUCKET_HOST}:${BUCKET_PORT} 2>&1) || {
+  if echo "$output" | grep -q "already exists"; then
+    echo "  Secret 'tempostack-dev-odf' already exists — skipping"
+  else
+    echo "$output" >&2
+    exit 1
+  fi
+}

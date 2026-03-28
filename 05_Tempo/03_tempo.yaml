@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tempo-odf-ca
-  namespace: ns1-uwl
+  namespace: openshift-tempo
   annotations:
     service.beta.openshift.io/inject-cabundle: "true"
 ---
@@ -10,7 +10,7 @@ apiVersion: tempo.grafana.com/v1alpha1
 kind:  TempoStack
 metadata:
   name: simplest
-  namespace: ns1-uwl
+  namespace: openshift-tempo
 spec:
   observability:
     metrics:

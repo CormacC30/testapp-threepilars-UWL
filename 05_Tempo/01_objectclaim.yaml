@@ -2,7 +2,7 @@ apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
   name: tempo-bucket-odf
-  namespace: ns1-uwl
+  namespace: openshift-tempo
 spec:
   generateBucketName: tempo-bucket-odf
   storageClassName: openshift-storage.noobaa.io

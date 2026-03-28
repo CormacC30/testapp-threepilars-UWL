@@ -2,7 +2,7 @@ apiVersion: perses.dev/v1alpha2
 kind: PersesDatasource
 metadata:
   name: custom-datasource
-  namespace:  ns1-uwl
+  namespace:  openshift-tempo
 spec:
   config:
     display:
@@ -58,7 +58,7 @@ apiVersion: perses.dev/v1alpha2
 kind: PersesGlobalDatasource
 metadata:
   name: tempo-platform
-  namespace: ns1-uwl
+  namespace: openshift-tempo
 spec:
   config:
     display:
@@ -70,7 +70,7 @@ spec:
         proxy:
           kind: HTTPProxy
           spec:
-            url: https://tempo-simplest-gateway.ns1-uwl.svc.cluster.local:8080/api/traces/v1/platform/tempo
+            url: https://tempo-simplest-gateway.openshift-tempo.svc.cluster.local:8080/api/traces/v1/platform/tempo
             headers:
               X-Scope-OrgID: platform
             secret: tempo-platform-secret

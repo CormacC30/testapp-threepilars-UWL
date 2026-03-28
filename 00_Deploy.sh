@@ -139,7 +139,6 @@ run_script "03_Logging/01_commands.sh"
 oc_create -f 03_Logging/02_objectclaim.yaml
 run_script "03_Logging/03_bucketsecret.sh"
 oc_create -f 03_Logging/04_loggingstack.yaml
-oc_create -f 03_Logging/05_alertingrule.yaml
 
 # ── Phase 4: OpenTelemetry ────────────────────────────────────────────────────
 log "--- Phase 4: Configure OpenTelemetry ---"
@@ -148,6 +147,7 @@ oc_create -f 04_Opentelemetry/01_collector.yaml
 
 # ── Phase 5: Tempo ────────────────────────────────────────────────────────────
 log "--- Phase 5: Configure Tempo ---"
+oc_create -f 05_Tempo/00_namespace.yaml
 oc_create -f 05_Tempo/01_objectclaim.yaml
 run_script "05_Tempo/02_bucketsecret.sh"
 oc_create -f 05_Tempo/03_tempo.yaml
