@@ -118,64 +118,59 @@ log "=== Starting deployment (log: $LOG_FILE) ==="
 
 # ── Phase 1: MCG Standalone ───────────────────────────────────────────────────
 log "--- Phase 1: Install MCG Standalone ---"
-oc_create -Rf 00_Install_Odf/01_subscription_mcg.yaml
+oc_create -Rf 01_Install_Odf/01_subscription_mcg.yaml
 wait_for_subscription mcg-operator openshift-storage 900
 
-oc_create -Rf 00_Install_Odf/02_noobaa.yaml
-run_script "00_Install_Odf/03_postInstall.sh"   # polls until NooBaa is Ready
+oc_create -Rf 01_Install_Odf/02_noobaa.yaml
+run_script "01_Install_Odf/03_postInstall.sh"   # polls until NooBaa is Ready
 
 # ── Phase 2: Operators ────────────────────────────────────────────────────────
 log "--- Phase 2: Install Operators ---"
-oc_create -Rf 01_Operators/
+oc_create -Rf 02_Operators/
 wait_for_subscription coo-operator           openshift-operators             600
 wait_for_subscription loki-operator          openshift-operators-redhat      600
 wait_for_subscription logging-operator       openshift-logging               600
 wait_for_subscription otel-operator          openshift-operators             600
 wait_for_subscription tempo-operator         openshift-operators             600
 
-# ── Phase 3: Test App ─────────────────────────────────────────────────────────
-log "--- Phase 3: Deploy Test App ---"
-oc_create -Rf 02_App/
-
-# ── Phase 4: Logging ──────────────────────────────────────────────────────────
-log "--- Phase 4: Configure Logging ---"
+# ── Phase 3: Logging ──────────────────────────────────────────────────────────
+log "--- Phase 3: Configure Logging ---"
 run_script "03_Logging/01_commands.sh"
 oc_create -f 03_Logging/02_objectclaim.yaml
 run_script "03_Logging/03_bucketsecret.sh"
 oc_create -f 03_Logging/04_loggingstack.yaml
 oc_create -f 03_Logging/05_alertingrule.yaml
 
-# ── Phase 5: OpenTelemetry ────────────────────────────────────────────────────
-log "--- Phase 5: Configure OpenTelemetry ---"
+# ── Phase 4: OpenTelemetry ────────────────────────────────────────────────────
+log "--- Phase 4: Configure OpenTelemetry ---"
 oc_create -f 04_Opentelemetry/00_namespace.yaml
 oc_create -f 04_Opentelemetry/01_collector.yaml
 
-# ── Phase 6: Tempo ────────────────────────────────────────────────────────────
-log "--- Phase 6: Configure Tempo ---"
+# ── Phase 5: Tempo ────────────────────────────────────────────────────────────
+log "--- Phase 5: Configure Tempo ---"
 oc_create -f 05_Tempo/01_objectclaim.yaml
 run_script "05_Tempo/02_bucketsecret.sh"
 oc_create -f 05_Tempo/03_tempo.yaml
 oc_create -f 05_Tempo/04_uiplugin.yaml
 
-# ── Phase 7: User Workload Monitoring ─────────────────────────────────────────
-log "--- Phase 7: Configure User Workload Monitoring ---"
+# ── Phase 6: User Workload Monitoring ─────────────────────────────────────────
+log "--- Phase 6: Configure User Workload Monitoring ---"
 oc_create -Rf 06_UserWorkload/
 
-# ── Phase 8: Perses ───────────────────────────────────────────────────────────
-log "--- Phase 8: Configure Perses ---"
+# ── Phase 7: Perses ───────────────────────────────────────────────────────────
+log "--- Phase 7: Configure Perses ---"
 oc_create -Rf 07_Perses/
 
-# ── Phase 9: Troubleshooting ──────────────────────────────────────────────────
-log "--- Phase 9: Configure Troubleshooting ---"
+# ── Phase 8: Troubleshooting ──────────────────────────────────────────────────
+log "--- Phase 8: Configure Troubleshooting ---"
 oc_create -Rf 08_Troubleshooting/
 
-# ── Phase 10: Restart app to pick up OTEL gateway endpoint ───────────────────
-log "--- Phase 10: Restarting app to pick up OTEL gateway endpoint ---"
-oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
-oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
+# ── Phase 9: Deploy ns1-uwl App ───────────────────────────────────────────────
+log "--- Phase 9: Deploy ns1-uwl app ---"
+oc_create -Rf 09_ns1App/
 
-# ── Phase 11: ns2-uwl Frontend/Backend App ───────────────────────────────────
-log "--- Phase 11: Deploy ns2-uwl frontend/backend ---"
-oc_create -Rf 09_ns2App/
+# ── Phase 10: Deploy ns2-uwl Frontend/Backend ─────────────────────────────────
+log "--- Phase 10: Deploy ns2-uwl frontend/backend ---"
+oc_create -Rf 10_ns2App/
 
 log "=== Deployment complete ==="
