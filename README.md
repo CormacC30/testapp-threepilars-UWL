@@ -3,7 +3,7 @@ I use this to demonstrate collecting metrics, logs and traces on Openshift - Usi
 
 User workload monitoring is used to store user metrics.
 The cluster logging and loki operators are used to collect and store logs.
-The Opentelemetry collector is used to colect traces.
+The Opentelemetry collector is used to collect traces.
 Tempo is used to store traces. 
 The cluster observability operator manages the UIPlugins.  
 
