@@ -169,7 +169,7 @@ log "--- Phase 9: Configure Troubleshooting ---"
 oc_create -Rf 08_Troubleshooting/
 
 # ── Phase 10: Deploy OTEL sidecar ────────────────────────────────────────────
-
+log "--- Phase 10: Deploying OTEL sidecar ---"
 oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
 oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
 
