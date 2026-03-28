@@ -15,10 +15,12 @@ spec:
     metadata:
       labels:
         app: threepilar-example
-      annotations:
-        sidecar.opentelemetry.io/inject: "true"
+
     spec:
       containers:
       - image: quay.io/rhn_support_nigsmith/testapp-threepilars:latest
         imagePullPolicy: IfNotPresent
         name: threepilar-example
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.opentelemetry.svc.cluster.local:4317"

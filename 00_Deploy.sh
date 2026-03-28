@@ -147,6 +147,7 @@ oc_create -f 03_Logging/05_alertingrule.yaml
 
 # ── Phase 5: OpenTelemetry ────────────────────────────────────────────────────
 log "--- Phase 5: Configure OpenTelemetry ---"
+oc_create -f 04_Opentelemetry/00_namespace.yaml
 oc_create -f 04_Opentelemetry/01_collector.yaml
 
 # ── Phase 6: Tempo ────────────────────────────────────────────────────────────
@@ -168,9 +169,13 @@ oc_create -Rf 07_Perses/
 log "--- Phase 9: Configure Troubleshooting ---"
 oc_create -Rf 08_Troubleshooting/
 
-# ── Phase 10: Deploy OTEL sidecar ────────────────────────────────────────────
-log "--- Phase 10: Deploying OTEL sidecar ---"
+# ── Phase 10: Restart app to pick up OTEL gateway endpoint ───────────────────
+log "--- Phase 10: Restarting app to pick up OTEL gateway endpoint ---"
 oc scale -n ns1-uwl --replicas=0 deployment/threepilar-uwl-example-app
 oc scale -n ns1-uwl --replicas=1 deployment/threepilar-uwl-example-app
+
+# ── Phase 11: ns2-uwl Frontend/Backend App ───────────────────────────────────
+log "--- Phase 11: Deploy ns2-uwl frontend/backend ---"
+oc_create -Rf 09_ns2App/
 
 log "=== Deployment complete ==="

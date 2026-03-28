@@ -19,9 +19,10 @@ The cluster observability operator manages the UIPlugins.
 
 TODO
 
-replace test app with one consisting of a front and backend.
- - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
- - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-backend 
+~~replace test app with one consisting of a front and backend.~~
+ - A frontend/backend app pair is deployed in `ns2-uwl` alongside the existing single-app in `ns1-uwl`
+ - Frontend: https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend
+ - Backend: https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-backend
 
 Add Netobserv - with alerts
 

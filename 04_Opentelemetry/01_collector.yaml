@@ -2,19 +2,19 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: otel-collector-sidecar
-  namespace: ns1-uwl
+  namespace: opentelemetry
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: otel
-  namespace: ns1-uwl
+  namespace: opentelemetry
 spec:
   observability:
     metrics:
       enableMetrics: true
   serviceAccount: otel-collector-sidecar
-  mode: sidecar
+  mode: deployment
   config: |
     extensions:
       bearertokenauth:
@@ -80,13 +80,13 @@ metadata:
 rules:
   - apiGroups:
       - 'tempo.grafana.com'
-    resources: 
+    resources:
       - dev
       - prod
     resourceNames:
       - traces
     verbs:
-      - 'get' 
+      - 'get'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -95,12 +95,12 @@ metadata:
 rules:
   - apiGroups:
       - 'tempo.grafana.com'
-    resources: 
+    resources:
       - dev
     resourceNames:
       - traces
     verbs:
-      - 'create' 
+      - 'create'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -113,7 +113,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: otel-collector-sidecar
-    namespace: ns1-uwl
-  - kind: ServiceAccount
-    name: default
-    namespace: ns1-uwl
+    namespace: opentelemetry
