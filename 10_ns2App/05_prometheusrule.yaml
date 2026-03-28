@@ -7,13 +7,13 @@ spec:
   groups:
   - name: threepilar-uwl-ns2
     rules:
-    - alert: FrontendConnectionCount
+    - alert: TestappFrontendConnectionCount
       for: 1m
       expr: ping_request_count{job="threepilar-frontend-service"} > 0
       labels:
         severity: warning
-    - alert: BackendResponseCount
+    - alert: TestappBackendResponseCount
       for: 1m
-      expr: response_request_count{job="threepilar-backend-service"} > 0
+      expr: ping_response_request_count{job="threepilar-backend-service"} > 0
       labels:
         severity: warning
