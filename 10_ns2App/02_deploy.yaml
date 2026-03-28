@@ -23,6 +23,8 @@ spec:
         env:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://otel-collector.opentelemetry.svc.cluster.local:4317"
+        - name: OTEL_SERVICE_NAME
+          value: "threepilar-frontend"
         - name: BACKEND_URL
           value: "http://threepilar-backend-service:8091"
 ---
@@ -51,3 +53,5 @@ spec:
         env:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://otel-collector.opentelemetry.svc.cluster.local:4317"
+        - name: OTEL_SERVICE_NAME
+          value: "threepilar-backend"

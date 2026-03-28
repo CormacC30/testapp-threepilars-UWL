@@ -24,3 +24,5 @@ spec:
         env:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://otel-collector.opentelemetry.svc.cluster.local:4317"
+        - name: OTEL_SERVICE_NAME
+          value: "threepilar-app"
