@@ -5,7 +5,6 @@ A testapp is deployed with always firing alerts for both metrics and logs.
 Demo App: https://github.com/coffeegoesincodecomesout/testapp-ThreePilars
 
 1. Ensure the following operators are installed on your cluster:
-     Openshift data foundation,
      Red Hat cluster observability operator, 
      Red Hat Build of OpenTelemetry, 
      Red Hat Openshift logging, 
