@@ -7,7 +7,7 @@ The Opentelemetry collector is used to colect traces.
 Tempo is used to store traces. 
 The cluster observability operator manages the UIPlugins.  
 
-A pair of testapps are deployed in namespaces `ns1-uwl` and `ns2-uwl` respectivily
+testapps are deployed in namespaces `ns1-uwl` and `ns2-uwl`
 
 The app in `ns1-uwl`: 
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars 
