@@ -22,3 +22,6 @@ Run the Deploy script:
 ./00_Deploy.sh
 ```
 
+TODO
+
+Netobserv with example alert
