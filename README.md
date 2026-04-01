@@ -24,4 +24,6 @@ Run the Deploy script:
 
 TODO
 
+Add oAuth and some users 
+
 Netobserv with example alert
