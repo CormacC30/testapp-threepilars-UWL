@@ -13,7 +13,7 @@ spec:
     selector:
       matchLabels:
         openshift.io/log-alerting: 'true'
-  size: 1x.extra-small
+  size: 1x.demo
   storage:
     schemas:
     - version: v13
