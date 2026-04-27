@@ -16,14 +16,8 @@ The app in `ns2-uwl`:
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-backend 
 
-Run the Deploy script: 
+Run the Deploy script:
 
 ```
 ./00_Deploy.sh
 ```
-
-TODO
-
-Add oAuth and some users 
-
-Netobserv with example alert
