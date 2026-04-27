@@ -132,6 +132,7 @@ wait_for_subscription loki-operator          openshift-operators-redhat      600
 wait_for_subscription logging-operator       openshift-logging               600
 wait_for_subscription otel-operator          openshift-operators             600
 wait_for_subscription tempo-operator         openshift-operators             600
+wait_for_subscription netobserv-operator     openshift-netobserv-operator    600
 
 # ── Phase 3: Logging ──────────────────────────────────────────────────────────
 log "--- Phase 3: Configure Logging ---"
@@ -172,5 +173,13 @@ oc_create -Rf 09_ns1App/
 # ── Phase 10: Deploy ns2-uwl Frontend/Backend ─────────────────────────────────
 log "--- Phase 10: Deploy ns2-uwl frontend/backend ---"
 oc_create -Rf 10_ns2App/
+
+# ── Phase 11: Deploy Netobserv ────────────────────────────────────────────────
+log "--- Phase 11: Deploy netobserv ---"
+oc_create -f 11_NetObserv/01_namespace.yaml 
+oc_create -f 11_NetObserv/02_objectclaim.yaml
+run_script "11_NetObserv/03_bucketsecret.sh"
+oc_create -f 11_NetObserv/04_netstack.yaml
+oc_create -f 11_NetObserv/05_alert.yaml
 
 log "=== Deployment complete ==="
