@@ -182,4 +182,8 @@ run_script "11_NetObserv/03_bucketsecret.sh"
 oc_create -f 11_NetObserv/04_netstack.yaml
 oc_create -f 11_NetObserv/05_alert.yaml
 
+# ── Phase 12: Deploy Auto-Instrumented App─────────────────────────────────────
+log "--- Phase 12: Deploy auto-instrumented Python App ---" 
+run_script "12_AutoInstrumented/00_DEPLOY_INSTRUMENTED.sh"
+
 log "=== Deployment complete ==="
