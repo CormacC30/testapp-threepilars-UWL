@@ -2,10 +2,6 @@
 
 set -uo pipefail
 
-# Colors for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 
 # Helper function to run commands and handle AlreadyExists errors
 execute() {
@@ -16,10 +12,10 @@ execute() {
     output=$($cmd 2>&1) || exit_code=$?
 
     if [ ${exit_code:-0} -eq 0 ]; then
-        echo -e "${GREEN}✓${NC} $cmd"
+        echo -e "$cmd"
         return 0
     elif echo "$output" | grep -q "AlreadyExists"; then
-        echo -e "${YELLOW}⚠${NC} Resource already exists (skipping): $cmd"
+        echo -e "Resource already exists (skipping): $cmd"
         return 0
     else
         echo "Error executing: $cmd"
@@ -44,16 +40,3 @@ execute oc expose deployment test-py -n ns3 --port 8090
 echo "Exposing service as route..."
 execute oc expose svc test-py -n ns3
 
-# Create instrumentation
-echo "Creating instrumentation..."
-execute oc create -f 01_INSTRUMENTATION.yaml
-
-# Patch deployment with instrumentation annotation
-echo "Patching deployment with instrumentation annotation..."
-oc patch deployment test-py -n ns3 -p '{"spec": {"template": {"metadata": {"annotations": {"instrumentation.opentelemetry.io/inject-python": "true"}}}}}'
-
-# Restart deployment
-echo "Restarting deployment..."
-oc -n ns3 rollout restart deployment test-py
-
-echo -e "${GREEN}Deployment complete!${NC}"
