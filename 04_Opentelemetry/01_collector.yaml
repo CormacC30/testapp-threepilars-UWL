@@ -121,6 +121,15 @@ spec:
             - batch
           receivers:
             - otlp
+        traces/debug:
+          exporters:
+            - debug
+          processors:
+            - memory_limiter
+            - resourcedetection
+            - k8sattributes
+          receivers:
+            - otlp
       telemetry:
         logs:
           development: true

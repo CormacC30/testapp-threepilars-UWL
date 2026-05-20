@@ -27,6 +27,10 @@ spec:
         value: otlp
       - name: OTEL_METRICS_EXPORTER
         value: otlp
+      # Disable Flask debug mode to prevent Werkzeug reloader from forking
+      # Per Red Hat OpenTelemetry operator best practices - ensures auto-instrumentation works
+      - name: FLASK_DEBUG
+        value: "0"
       #- name: OTEL_LOG_LEVEL
       #  value: "debug"
       #- name: OTEL_TRACES_EXPORTER
