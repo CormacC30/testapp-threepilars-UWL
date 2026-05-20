@@ -113,7 +113,7 @@ spec:
             - otlp
         traces:
           exporters:
-            - otlp/tempo
+            - otlphttp/tempo
           processors:
             - memory_limiter
             - resourcedetection
