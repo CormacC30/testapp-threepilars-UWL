@@ -184,7 +184,6 @@ oc_create -f 11_NetObserv/05_alert.yaml
 
 # ── Phase 12: Deploy Auto-Instrumented App─────────────────────────────────────
 log "--- Phase 12: Deploy auto-instrumented Python App ---" 
-# run_script "12_AutoInstrumented/00_DEPLOY_INSTRUMENTED.sh"
 oc_create -f 12_AutoInstrumented/01_namespace.yaml
 oc_create -f 12_AutoInstrumented/02_deploy.yaml
 oc_create -f 12_AutoInstrumented/03_expose.yaml
