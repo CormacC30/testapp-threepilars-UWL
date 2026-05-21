@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-py
+    openshift.io/log-alerting: 'true'
+  name: test-py
+  namespace: ns3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-py
+  template:
+    metadata:
+      labels:
+        app: test-py
+    spec:
+      containers:
+      - image: quay.io/rhn-support-ccostell/ping-py:latest
+        imagePullPolicy: IfNotPresent
+        name: test-py
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.opentelemetry.svc.cluster.local:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "test-py"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "none"

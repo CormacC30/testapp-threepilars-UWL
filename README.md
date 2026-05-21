@@ -16,6 +16,10 @@ The app in `ns2-uwl`:
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-Frontend 
  - https://github.com/coffeegoesincodecomesout/testapp-ThreePilars-backend 
 
+The app in `ns3`:
+ - https://github.com/CormacC30/py-flask-otel
+ - Auto-instrumentation injects environment variables to handle Prometheus metrics export via User-Workload-Monitoring.
+
 Run the Deploy script:
 
 ```

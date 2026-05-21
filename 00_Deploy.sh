@@ -184,8 +184,12 @@ oc_create -f 11_NetObserv/05_alert.yaml
 
 # ── Phase 12: Deploy Auto-Instrumented App─────────────────────────────────────
 log "--- Phase 12: Deploy auto-instrumented Python App ---" 
-run_script "12_AutoInstrumented/00_DEPLOY_INSTRUMENTED.sh"
-oc_create -f 12_AutoInstrumented/01_INSTRUMENTATION.yaml
+# run_script "12_AutoInstrumented/00_DEPLOY_INSTRUMENTED.sh"
+oc_create -f 12_AutoInstrumented/01_namespace.yaml
+oc_create -f 12_AutoInstrumented/02_deploy.yaml
+oc_create -f 12_AutoInstrumented/03_expose.yaml
+oc_create -f 12_AutoInstrumented/04_servicemonitor.yaml
+oc_create -f 12_AutoInstrumented/05_instrumentation.yaml
 
 # annotate the pod to inject instrumentation
 echo "Patching deployment with instrumentation annotation..."
@@ -194,7 +198,5 @@ oc patch deployment test-py -n ns3 -p '{"spec": {"template": {"metadata": {"anno
 # Restart deployment
 echo "Restarting deployment..."
 oc -n ns3 rollout restart deployment test-py
-
-echo -e "Deployment complete"
 
 log "=== Deployment complete ==="

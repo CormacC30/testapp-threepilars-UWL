@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: test-py
+  name: test-py-monitor
+  namespace: ns3
+spec:
+  endpoints:
+  - interval: 30s
+    port: metrics
+    scheme: http
+    path: /metrics
+    honorLabels: true
+  selector:
+    matchLabels:
+      app: test-py

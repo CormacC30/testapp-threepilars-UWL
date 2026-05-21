@@ -29,14 +29,14 @@ echo "Creating project ns3..."
 execute oc new-project ns3
 
 # Create deployment
-echo "Creating deployment test-py..."
-execute oc create deployment test-py --image quay.io/rhn-support-ccostell/ping-py:latest -n ns3
+# echo "Creating deployment test-py..."
+# execute oc create deployment test-py --image quay.io/rhn-support-ccostell/ping-py:latest -n ns3
 
 # Expose deployment as service
-echo "Exposing deployment as service..."
-execute oc expose deployment test-py -n ns3 --port 8090
+# echo "Exposing deployment as service..."
+# execute oc expose deployment test-py -n ns3 --port 8090
 
 # Expose service as route
-echo "Exposing service as route..."
-execute oc expose svc test-py -n ns3
+# echo "Exposing service as route..."
+# execute oc expose svc test-py -n ns3
 

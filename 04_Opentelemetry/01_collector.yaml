@@ -4,169 +4,74 @@ metadata:
   name: otel-collector-sidecar
   namespace: opentelemetry
 ---
-apiVersion: opentelemetry.io/v1beta1
+apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: otel
   namespace: opentelemetry
 spec:
-  networkPolicy: {}
   observability:
     metrics:
       enableMetrics: true
-  deploymentUpdateStrategy: {}
-  config:
-    exporters:
-      debug:
-        verbosity: detailed
-      otlp/tempo:
-        auth:
-          authenticator: bearertokenauth
-        endpoint: 'tempo-simplest-gateway.openshift-tempo.svc.cluster.local:8090'
-        headers:
-          X-Scope-OrgID: dev
-        tls:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
-          insecure: false
-      otlphttp/loki:
-        auth:
-          authenticator: bearertokenauth
-        encoding: json
-        endpoint: 'https://logging-loki-gateway-http.openshift-logging.svc.cluster.local:8080/api/logs/v1/application/otlp'
-        tls:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
-      otlphttp/tempo:
-        auth:
-          authenticator: bearertokenauth
-        endpoint: 'https://tempo-simplest-gateway.openshift-tempo.svc.cluster.local:8080/api/traces/v1/dev'
-        headers:
-          X-Scope-OrgID: dev
-        tls:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
-          insecure: false
-      prometheus:
-        endpoint: '0.0.0.0:8889'
-        resource_to_telemetry_conversion:
-          enabled: true
+  serviceAccount: otel-collector-sidecar
+  mode: deployment
+  config: |
     extensions:
       bearertokenauth:
-        filename: /var/run/secrets/kubernetes.io/serviceaccount/token
+        filename: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+    receivers:
+      otlp/grpc:
+        protocols:
+          grpc:
+      otlp/http:
+        protocols:
+          http:
     processors:
       batch:
-        timeout: 1s
-      k8sattributes:
-        auth_type: serviceAccount
-        extract:
-          metadata:
-            - k8s.pod.name
-            - k8s.pod.uid
-            - k8s.deployment.name
-            - k8s.namespace.name
-        passthrough: false
       memory_limiter:
         check_interval: 1s
         limit_percentage: 50
         spike_limit_percentage: 30
       resourcedetection:
-        detectors:
-          - openshift
+        detectors: [openshift]
         timeout: 2s
-    receivers:
+    exporters:
       otlp:
-        protocols:
-          grpc:
-            endpoint: '0.0.0.0:4317'
-          http:
-            endpoint: '0.0.0.0:4318'
+        endpoint: tempo-simplest-gateway.openshift-tempo.svc.cluster.local:8090
+        tls:
+          insecure: false
+          ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+        auth:
+          authenticator: bearertokenauth
+        headers:
+          X-Scope-OrgID: "dev"
+      otlphttp:
+        endpoint: https://tempo-simplest-gateway.openshift-tempo.svc.cluster.local:8080/api/traces/v1/dev
+        tls:
+          insecure: false
+          ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+        auth:
+          authenticator: bearertokenauth
+        headers:
+          X-Scope-OrgID: "dev"
+      debug:
+        verbosity: detailed
     service:
-      extensions:
-        - bearertokenauth
-      pipelines:
-        logs:
-          exporters:
-            - otlphttp/loki
-          processors:
-            - memory_limiter
-            - resourcedetection
-            - k8sattributes
-            - batch
-          receivers:
-            - otlp
-        logs/debug:
-          exporters:
-            - debug
-          processors:
-            - memory_limiter
-            - resourcedetection
-            - k8sattributes
-          receivers:
-            - otlp
-        metrics:
-          exporters:
-            - prometheus
-          processors:
-            - memory_limiter
-            - resourcedetection
-            - k8sattributes
-            - batch
-          receivers:
-            - otlp
-        traces:
-          exporters:
-            - otlphttp/tempo
-          processors:
-            - memory_limiter
-            - resourcedetection
-            - k8sattributes
-            - batch
-          receivers:
-            - otlp
-        traces/debug:
-          exporters:
-            - debug
-          processors:
-            - memory_limiter
-            - resourcedetection
-            - k8sattributes
-          receivers:
-            - otlp
       telemetry:
         logs:
+          level: "DEBUG"
           development: true
-          encoding: json
-          level: DEBUG
-        metrics:
-          readers:
-            - pull:
-                exporter:
-                  prometheus:
-                    host: 0.0.0.0
-                    port: 8888
-  mode: deployment
-  resources: {}
-  podDnsConfig: {}
+          encoding: "json"
+      extensions: [bearertokenauth]
+      pipelines:
+        traces/grpc:
+          receivers: [otlp/grpc]
+          exporters: [otlp]
+        traces/http:
+          receivers: [otlp/http]
+          exporters: [otlphttp]
   managementState: managed
-  upgradeStrategy: automatic
-  ingress:
-    route: {}
-  serviceAccount: otel-collector-sidecar
-  daemonSetUpdateStrategy: {}
-  targetAllocator:
-    allocationStrategy: consistent-hashing
-    collectorNotReadyGracePeriod: 30s
-    collectorTargetReloadInterval: 30s
-    filterStrategy: relabel-config
-    observability:
-      metrics: {}
-    prometheusCR:
-      podMonitorSelector: {}
-      scrapeInterval: 30s
-      serviceMonitorSelector: {}
-    resources: {}
-  replicas: 1
-  ipFamilyPolicy: SingleStack
-  configVersions: 3
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
